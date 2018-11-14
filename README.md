@@ -22,4 +22,24 @@ Due to 11/27/2018: second draft of my final project
 Due to 12/05/2018: post my final project
 
 
+## First Milestone 
+### Try to complete the data 
 
+Question: still have trouble in finding the gene from the gct file.
+
+### Try to create first PCA 
+code:
+```{r}
+library(ggplot2)
+#library('RColorBrewer')
+library(dplyr)
+library(plotly)
+library(data.table)
+
+setwd(dir = '/Users/user')
+genocode <- read.csv('genocade ID.csv',header = TRUE, sep = ",", quote = "\"", dec = ".", fill = TRUE, row.names = 1)
+genocode_sample <- as.data.frame(t(genocode[c(rep(),TRUE), ]))
+pca<-prcomp(genocode_sample)
+
+```
+Question: After running the last code "pca<-prcomp(genocode_sample)". It always shows that "Error in colMeans(x, na.rm = TRUE) : 'x' must be numeric".
