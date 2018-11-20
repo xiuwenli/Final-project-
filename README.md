@@ -5,7 +5,8 @@
 I find some data about disease adipose and want to use informatics to do some data analyses. I collected two different data about two different types of adipose. One is adipose in subcutaneous. The other data is about visceral adipose (sample choose from visceral omentum). They both contain gender, age and sample tissue ID and hardy scale about each individual sample. So that, I want to use these data to compare different adipose disease. By using R studio and library in R. I want to know that is adipose a kind of disease that usually exist in female or male, and which kind of age group dose subcutaneous adipose disease or visceral adipose disease usually show in, and is it have serious influence in people’s life? I collected twenty different genocode ID information for each adipose tissue from GTEx website, and get the whole RNAseq gene tpm file from that website. I would comparing these fourty gene by using PCA analysis. 
 
 The data come from:
-https://gtexportal.org/home/histologyPage.  
+https://gtexportal.org/home/eqtls/tissue?tissueName=Adipose_Subcutaneous 
+https://gtexportal.org/home/eqtls/tissue?tissueName=Adipose_Visceral_Omentum
 Adipose – Subcutaneous & Adipose - Visceral (Omentum)
 
 Timelines:
