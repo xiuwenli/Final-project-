@@ -75,4 +75,5 @@ plot_ly(pcadf, x = ~PC1, y = ~PC2, z = ~PC3, color = ~PC4, colors = c('#BF382A',
  
  Question:
  Inner_join should not be joined by gene, but be joined by tissue 
+ Before create PCA, I should analyse my data first, by creating histogram and else.
  
