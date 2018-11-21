@@ -42,3 +42,37 @@ pca<-prcomp(genocode_sample)
 
 ```
 Question: After running the last code "pca<-prcomp(genocode_sample)". It always shows that "Error in colMeans(x, na.rm = TRUE) : 'x' must be numeric".
+
+
+## Second Milestone
+### Create a inner_join file 
+
+code:
+```{r}
+library(ggplot2)
+library('RColorBrewer')
+library(dplyr)
+library(plotly)
+library(data.table)
+
+setwd(dir = '/Users/user')
+genocode <- read.csv('GTEx_Analysis_2016-01-15_v7_RNASeQCv1.1.8_gene_tpm.gct',header = TRUE, sep = "", dec = ".")
+setwd(dir = '/Users/user')
+tissue <- read.csv('Adipose - Visceral (Omentum).csv',header = TRUE, sep = ",", dec = ".", fill = TRUE, quote = "\"")
+genocode_all <- inner_join(tissue, genocode, a, by = "Name")
+genocode_all2 <- genocode_all[,-1]
+rownames(genocode_all2) <- genocode_all[,1]
+genocode_pca <- genocode_all2[-1:-7]
+pca <- prcomp(genocode_pca)
+pcadf<-data.frame(pca$rotation)
+plot_ly(data = pcadf, x = ~PC1, y = ~PC2, text = ~PC3)
+plot_ly(pcadf, x = ~PC1, y = ~PC2, z = ~PC3, color = ~PC4, colors = c('#BF382A', '#0C4B8E')) %>%
+ add_markers() %>%
+ layout(scene = list(xaxis = list(title = 'PC1'),
+ yaxis = list(title = 'PC2'),
+ zaxis = list(title = 'PC3')))
+ ```
+ 
+ Question:
+ Inner_join should not be joined by gene, but be joined by tissue 
+ 
