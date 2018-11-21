@@ -1,0 +1,76 @@
+---
+title: "Untitled"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+```{r}
+library(ggplot2)
+library('RColorBrewer')
+library(dplyr)
+library(plotly)
+library(data.table)
+
+setwd(dir = '/Users/user')
+genocode <- read.csv('GTEx_Analysis_2016-01-15_v7_RNASeQCv1.1.8_gene_tpm.gct',header = TRUE, sep = "", dec = ".")
+#genocode_sample <- as.data.frame(t(genocode[c(rep(),TRUE), ]))
+#genocode_p <- genocode[-1]
+#pca<-prcomp(genocode_p)
+
+```
+
+```{r}
+library(ggplot2)
+library('RColorBrewer')
+library(dplyr)
+library(plotly)
+
+setwd(dir = '/Users/user')
+tissue <- read.csv('Adipose - Visceral (Omentum).csv',header = TRUE, sep = ",", dec = ".", fill = TRUE, quote = "\"")
+genocode_all <- inner_join(tissue, genocode, a, by = "Name")
+genocode_all2 <- genocode_all[,-1]
+rownames(genocode_all2) <- genocode_all[,1]
+genocode_pca <- genocode_all2[-1:-7]
+pca <- prcomp(genocode_pca)
+pcadf<-data.frame(pca$rotation)
+plot_ly(data = pcadf, x = ~PC1, y = ~PC2, text = ~PC3)
+plot_ly(pcadf, x = ~PC1, y = ~PC2, z = ~PC3, color = ~PC4, colors = c('#BF382A', '#0C4B8E')) %>%
+ add_markers() %>%
+ layout(scene = list(xaxis = list(title = 'PC1'),
+ yaxis = list(title = 'PC2'),
+ zaxis = list(title = 'PC3')))
+```
+
+```{r}
+genocode_pca <- genocode_all[-2:-8]
+pca<-prcomp(genocode_pca)
+pcadf<-data.frame(pca$rotation)
+```
+
+read.csv
+rotation_gene <- data.frame(Sample=row.names(pca_tissue$rotation), pca_gene$rotation,row.names = NULL)
+plot_ly(rotation_gene, x = ~PC1, y = ~PC2, z = ~PC3, colors="Set1", color = ~Sample,
+        type="scatter3d",mode="markers")
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r cars}
+summary(cars)
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
