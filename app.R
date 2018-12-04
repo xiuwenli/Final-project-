@@ -8,78 +8,42 @@
 #
 
 library(shiny)
-library(datasets)
+library(ggplot2)
 library(plotly)
+library(datasets)
 
-
-dataset <- dataset <- read.csv('genocode_all_pcadf.csv',header = TRUE, sep = ",", quote = "\"", dec = ".", fill = TRUE, row.names = 1)
-nms <- names(dataset)
-
-
+dataset <- read.csv('genocode_all_pcadf.csv',header = TRUE, sep = ",", quote = "\"", dec = ".", fill = TRUE, row.names = 1)
+headerNames=colnames(dataset)
 # Define UI for application that draws a histogram
 ui <- fluidPage(
    
    # Application title
-   titlePanel("Data Explore"),
+   titlePanel("Adipose PCA Data"),
    
    # Sidebar with a slider input for number of bins 
    sidebarLayout(
-     sidebarPanel(
-       selectInput('x', 'X', choices = nms, selected = 'Gender'),
-       selectInput('y', 'Y', choices = nms, selected = 'Gender'),
-       selectInput('z', 'Z', choices = nms, selected = 'Gender'),
-       selectInput('color', 'Color', choices = nms, selected = 'tissue.sample.type'),
-       checkboxInput('geom_point', 'geom_point'),
-       checkboxInput('geom_dotplot', 'geom_dotplot'),
-       checkboxInput('geom_bar', 'geom_bar'),
-       checkboxInput('geom_histogram', 'geom_histogram'),
-       checkboxInput('geom_violin', 'geom_violin')
+      sidebarPanel(
+        selectInput('x', 'X', c("None"=FALSE,headerNames),headerNames[7]),
+        selectInput('y', 'Y', c("None"=FALSE,headerNames),headerNames[8]),
+        selectInput('z', 'Z', c("None"=FALSE,headerNames),headerNames[9])
       ),
       
       # Show a plot of the generated distribution
-      mainPanel(
-        plotlyOutput('trendPlot', height = "900px")
-      )
+      mainPanel(plotlyOutput("plot"))
    )
 )
 
 # Define server logic required to draw a histogram
 server <- function(input, output) {
-  dataset <- reactive({
-    genocode_all_pcadf[sample(nrow(genocode_all_pcadf))]
-  })
    
-  output$trendPlot <- renderPlot({
+   output$plot <- renderPlotly({
       # generate bins based on input$bins from ui.R
-    if (input$geom_point)
-      p <- ggplot(dataset(), aes_string(x = input$x, y = input$y, color = input$color)) + 
-        geom_point()
-      print(p)
-    
-    if (input$geom_bar)
-      p <- ggplot(dataset(), aes_string(x = input$x, color = input$color)) + 
-        geom_bar()
-      print(p)
-    if (input$geom_histogram)
-      p <- ggplot(dataset(), aes_string(x = input$x, y = input$y, color = input$color)) + 
-        geom_histogram()
-      print(p)
-     
-     # geom_dotplot doesn't requires an y input
-    if (input$geom_dotplot)
-      p <- ggplot(dataset(), aes_string(x = input$x, y = input$y, color = input$color)) + 
-        geom_dotplot()
-      print(p)
-     
-    if (input$geom_violin)
-      p <- ggplot(dataset(), aes_string(x = input$x, y = input$y, color = input$color)) + 
-        geom_violin()
-     print(p)
-
-
-   }, height=700)
-      
-      # draw the histogram with the specified number of bins
+     plot_ly(genocode_all_pcadf, x = ~get(input$x), y = ~get(input$y), z = ~get(input$z), color = genocode_all_pcadf$tissue.sample.type, colors = c('#BF382A', '#0C4B8E')) %>%
+       add_markers() %>%
+       layout(scene = list(xaxis = list(title = 'PC4'),
+                           yaxis = list(title = 'PC8'),
+                           zaxis = list(title = 'PC2')))
+   })
 }
 
 # Run the application 
