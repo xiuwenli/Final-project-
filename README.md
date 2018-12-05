@@ -129,5 +129,5 @@ plot_ly(pcadf, x = ~PC1, y = ~PC2, z = ~PC3, color = ~PC4, colors = c('#BF382A',
 ```
 
 Next plant:
-1. Creating a shiny app for the complete data file
-2. Creating a p-value about the tissue 
+Creating a shiny app for the complete data file
+
