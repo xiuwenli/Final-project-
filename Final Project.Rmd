@@ -1,0 +1,97 @@
+---
+title: "Untitled"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+```{r}
+library(ggplot2)
+library('RColorBrewer')
+library(dplyr)
+library(plotly)
+library(tibble)
+
+setwd(dir = '/Users/user')
+genocode <- read.csv('GTEx_Analysis_2016-01-15_v7_RNASeQCv1.1.8_gene_tpm.gct',header = TRUE, sep = "", dec = ".", row.names = 1)
+tissue <- read.csv('tissue sample data--complete copy.csv',header = TRUE, sep = ",", dec = ".", row.names = 4)
+genocode_two <- genocode[-1]
+genocode_sample <- as.data.frame(t(genocode_two[c(rep(11690,11690),TRUE), TRUE]))
+genocode_sample_two <- rownames_to_column(genocode_sample, var = "Sample ID")
+tissue_two <- rownames_to_column(tissue, var = "Sample ID")
+genocode_all <- inner_join(tissue_two, genocode_sample_two, a, by = "Sample ID")
+row.names(genocode_all) <- genocode_all$`Sample ID`
+genocode_all[1] <- NULL
+genocode_all_pre <- genocode_all[-1:-4]
+pca<-prcomp(genocode_all_pre)
+pcadf<-data.frame(pca$x)
+genocode_pcadf <- rownames_to_column(pcadf, var = "Sample ID")
+genocode_all_pcadf <- inner_join(tissue_two, genocode_pcadf, a, by = "Sample ID")
+write.csv(genocode_all_pcadf, "genocode_pca")
+```
+
+```{r} 
+#data analyses
+library(dendextend)
+
+ggplot(data = genocode_all_pcadf) +
+ geom_bar(mapping = aes(x = genocode_all_pcadf$tissue.sample.type, fill = genocode_all_pcadf$Hardy.scale))
+ggplot(data = genocode_all_pcadf) +
+ geom_bar(mapping = aes(x = genocode_all_pcadf$PC1, fill = genocode_all_pcadf$Hardy.scale), width = 2) +
+ coord_polar()
+```
+
+```{r}
+library(plotly)
+#show some data about pca 
+#plot_ly(data = genocode_all_pcadf, x = ~PC1, y = ~PC2, color = genocode_all_pcadf$tissue.sample.type)
+#plot_ly(genocode_all_pcadf, x = ~PC8, y = ~PC2, z = ~PC3, color = ~PC4, type="scatter3d",mode="markers")
+plot_ly(genocode_all_pcadf, x = ~PC1, y = ~PC7, z = ~PC2, color = genocode_all_pcadf$tissue.sample.type, colors = c('#BF382A', '#0C4B8E')) %>%
+  add_markers() %>%
+  layout(scene = list(xaxis = list(title = 'PC4'),
+                      yaxis = list(title = 'PC8'),
+                      zaxis = list(title = 'PC2')))
+```
+
+
+```{r}
+library(ggplot2)
+library(plotly)
+library(dplyr)
+library(tibble)
+library(ggpubr)
+# using t.test to calculate P.value
+genocode_all_pcadf_ttest <- genocode_all_pcadf
+row.names(genocode_all_pcadf_ttest) <- genocode_all_pcadf_ttest$`Sample ID`
+genocode_all_pcadf_ttest[3:5] <- NULL
+genocode_all_pcadf_ttest[1] <- NULL
+genocode_all_pcadf_ttest$mean <- apply(genocode_all_pcadf_ttest[,2:77], 1, mean)
+p <- ggboxplot(genocode_all_pcadf_ttest, x="tissue.sample.type", y="mean", color = "tissue.sample.type",
+  palette = "jco", add = "jitter") 
+p+stat_compare_means(method = "t.test")
+```
+
+
+
+
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r cars}
+summary(cars)
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
