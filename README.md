@@ -132,6 +132,42 @@ Next plant:
 Creating a shiny app for the complete data file
 
 # Final Project Compeletely
+## R markdown part
+code:
+```{r}
+library(ggplot2)
+library('RColorBrewer')
+library(dplyr)
+library(plotly)
+library(tibble)
+setwd(dir = '/Users/user')
+genocode <- read.csv('GTEx_Analysis_2016-01-15_v7_RNASeQCv1.1.8_gene_tpm.gct',header = TRUE, sep = "", dec = ".", row.names = 1)
+tissue <- read.csv('tissue sample data--complete copy.csv',header = TRUE, sep = ",", dec = ".", row.names = 4)
+genocode_two <- genocode[-1]
+genocode_sample <- as.data.frame(t(genocode_two[c(rep(11690,11690),TRUE), TRUE]))
+genocode_sample_two <- rownames_to_column(genocode_sample, var = "Sample ID")
+tissue_two <- rownames_to_column(tissue, var = "Sample ID")
+genocode_all <- inner_join(tissue_two, genocode_sample_two, a, by = "Sample ID")
+row.names(genocode_all) <- genocode_all$`Sample ID`
+genocode_all[1] <- NULL
+genocode_all_pre <- genocode_all[-1:-4]
+pca<-prcomp(genocode_all_pre)
+pcadf<-data.frame(pca$x)
+genocode_pcadf <- rownames_to_column(pcadf, var = "Sample ID")
+genocode_all_pcadf <- inner_join(tissue_two, genocode_pcadf, a, by = "Sample ID")
+write.csv(genocode_all_pcadf, "genocode_pca")
+```
+
+```{r} 
+#data analyses
+library(dendextend)
+ggplot(data = genocode_all_pcadf) +
+ geom_bar(mapping = aes(x = genocode_all_pcadf$tissue.sample.type, fill = genocode_all_pcadf$Hardy.scale))
+ggplot(data = genocode_all_pcadf) +
+ geom_bar(mapping = aes(x = genocode_all_pcadf$PC1, fill = genocode_all_pcadf$Hardy.scale), width = 2) +
+ coord_polar()
+```
+
 ## shiny part 
 I create a data wrangling shiny part in shinyapps.io
 
