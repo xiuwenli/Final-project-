@@ -135,6 +135,7 @@ Creating a shiny app for the complete data file
 Cause I cannot publish my PCA shiny part on shinyapps.io, I upload my code on Github (file named app2_PCApart.R) and copy my code into Readme. 
 
 code:
+```{r, shiny}
 library(shiny)
 library(ggplot2)
 library(plotly)
@@ -171,3 +172,4 @@ server <- function(input, output) {
 }
 
 shinyApp(ui = ui, server = server)
+```
