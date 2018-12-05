@@ -244,5 +244,6 @@ server <- function(input, output) {
 
 shinyApp(ui = ui, server = server)
 ```
+
 ### Rpub link: http://rpubs.com/xiuwenli/446063
 ### shinyapps.io link: https://xiuwenliassignment.shinyapps.io/Final_project/
