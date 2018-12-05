@@ -157,7 +157,6 @@ genocode_pcadf <- rownames_to_column(pcadf, var = "Sample ID")
 genocode_all_pcadf <- inner_join(tissue_two, genocode_pcadf, a, by = "Sample ID")
 write.csv(genocode_all_pcadf, "genocode_pca")
 ```
-
 ```{r} 
 #data analyses
 library(dendextend)
@@ -166,6 +165,33 @@ ggplot(data = genocode_all_pcadf) +
 ggplot(data = genocode_all_pcadf) +
  geom_bar(mapping = aes(x = genocode_all_pcadf$PC1, fill = genocode_all_pcadf$Hardy.scale), width = 2) +
  coord_polar()
+```
+```{r}
+library(plotly)
+#show some data about pca 
+#plot_ly(data = genocode_all_pcadf, x = ~PC1, y = ~PC2, color = genocode_all_pcadf$tissue.sample.type)
+#plot_ly(genocode_all_pcadf, x = ~PC8, y = ~PC2, z = ~PC3, color = ~PC4, type="scatter3d",mode="markers")
+plot_ly(genocode_all_pcadf, x = ~PC1, y = ~PC7, z = ~PC2, color = genocode_all_pcadf$tissue.sample.type, colors = c('#BF382A', '#0C4B8E')) %>%
+  add_markers() %>%
+  layout(scene = list(xaxis = list(title = 'PC4'),
+                      yaxis = list(title = 'PC8'),
+                      zaxis = list(title = 'PC2')))
+```
+```{r}
+library(ggplot2)
+library(plotly)
+library(dplyr)
+library(tibble)
+library(ggpubr)
+# using t.test to calculate P.value
+genocode_all_pcadf_ttest <- genocode_all_pcadf
+row.names(genocode_all_pcadf_ttest) <- genocode_all_pcadf_ttest$`Sample ID`
+genocode_all_pcadf_ttest[3:5] <- NULL
+genocode_all_pcadf_ttest[1] <- NULL
+genocode_all_pcadf_ttest$mean <- apply(genocode_all_pcadf_ttest[,2:77], 1, mean)
+p <- ggboxplot(genocode_all_pcadf_ttest, x="tissue.sample.type", y="mean", color = "tissue.sample.type",
+  palette = "jco", add = "jitter") 
+p+stat_compare_means(method = "t.test")
 ```
 
 ## shiny part 
